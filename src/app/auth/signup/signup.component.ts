@@ -20,7 +20,7 @@ function passwordsDoNotMatch() {
   styleUrl: "./signup.component.css",
 })
 export class SignupComponent {
-  
+
   form = new FormGroup({
     email: new FormControl("", {
       validators: [Validators.email, Validators.required],
@@ -69,12 +69,16 @@ export class SignupComponent {
   // }
 
   onSubmit() {
+    if (this.form.invalid) {
+      console.log('INVALID FORM');
+      return;
+    }
     console.log(this.form);
-    const enteredEmail = this.form.value.email;
-    // const enteredPassword = this.form.value.password;
+    // const enteredEmail = this.form.value.email;
+    
 
-    console.log(enteredEmail);
-    // console.log(enteredPassword);
+    // console.log(enteredEmail);
+  
 
     this.form.value.email;
   }
