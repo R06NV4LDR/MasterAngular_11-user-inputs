@@ -1,15 +1,24 @@
 import { Component } from "@angular/core";
 import {
+  AbstractControl,
   FormArray,
   FormControl,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import { of } from "rxjs";
 
-function passwordsDoNotMatch() {
-  return of({ passwordsDoNotMatch: false });
+function equalValues(controlName1: string, controlName2: string) {
+  return (control: AbstractControl) => {
+    const val1 = control.get(controlName1)?.value;
+    const val2 = control.get(controlName2)?.value;
+
+    if (val1 === val2) {
+      return null;
+    }
+
+    return { valuesNotEqual: true };
+  };
 }
 
 @Component({
@@ -20,19 +29,23 @@ function passwordsDoNotMatch() {
   styleUrl: "./signup.component.css",
 })
 export class SignupComponent {
-
   form = new FormGroup({
     email: new FormControl("", {
       validators: [Validators.email, Validators.required],
     }),
-    passwords: new FormGroup({
-      password: new FormControl("", {
-        validators: [Validators.required, Validators.minLength(6)],
-      }),
-      confirmPassword: new FormControl("", {
-        validators: [Validators.required, Validators.minLength(6)],
-      }),
-    }),
+    passwords: new FormGroup(
+      {
+        password: new FormControl("", {
+          validators: [Validators.required, Validators.minLength(6)],
+        }),
+        confirmPassword: new FormControl("", {
+          validators: [Validators.required, Validators.minLength(6)],
+        }),
+      },
+      {
+        validators: [equalValues('password','confirmPassword')],
+      }
+    ),
     firstName: new FormControl("", { validators: [Validators.required] }),
     lastName: new FormControl("", { validators: [Validators.required] }),
     address: new FormGroup({
@@ -70,15 +83,13 @@ export class SignupComponent {
 
   onSubmit() {
     if (this.form.invalid) {
-      console.log('INVALID FORM');
+      console.log("INVALID FORM");
       return;
     }
     console.log(this.form);
     // const enteredEmail = this.form.value.email;
-    
 
     // console.log(enteredEmail);
-  
 
     this.form.value.email;
   }
